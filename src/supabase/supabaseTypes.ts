@@ -1,11 +1,12 @@
 export type Todo = {
+  id: number;
   contents: string;
   isDone: boolean;
 };
 
-export type Database = {
-  todos: Todo[];
-};
+// export type Database = {
+//   todos: Todo[];
+// };
 
 
 // export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
