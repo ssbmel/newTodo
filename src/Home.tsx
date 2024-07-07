@@ -120,25 +120,26 @@ export default function Home() {
           {todoList.map((todo) => (
             <div className="todoBox" key={todo.id}>
               {todo.isClicked ? (
-                <input defaultValue={todo.contents} ref={editTodoRef} />
+                <input className="editInput" defaultValue={todo.contents} ref={editTodoRef} />
               ) : (
-                <p
-                  key={todo.id}
-                  onClick={() => toggleHandler(todo.id)}
-                  style={{
-                    cursor: "pointer",
-                    textDecoration: todo.isDone ? "line-through" : "none",
-                  }}
-                >
-                  {todo.contents}
-                </p>
+                  <p
+                    key={todo.id}
+                    onClick={() => toggleHandler(todo.id)}
+                    style={{
+                      cursor: "pointer",
+                      width : "500px",
+                      textDecoration: todo.isDone ? "line-through" : "none",
+                    }}
+                  >
+                    {todo.contents}
+                  </p>
               )}
               {todo.isClicked ? (
                 <button
                   className="btn"
                   onClick={() => editTodoHandler(todo.id)}
                 >
-                  수정완료
+                  완료
                 </button>
               ) : (
                 <button className="btn" onClick={() => editHandler(todo.id)}>

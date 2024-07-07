@@ -150,6 +150,7 @@ button {
 	color: white;
   vertical-align: baseline;
 	background-color: rgb(53, 53, 53);
+	width: 60px;
 }
 .box{
 	border-radius: 15px;
@@ -172,11 +173,16 @@ button {
 	cursor: pointer;
 }
 .inputStyle {
-	width: 250px;
+	width: 400px;
 	height: 30px;
 	border: 1px solid black;
 	border-radius: 10px;
 	font-size: 1rem;
 	margin-right: 10px;
 	padding-left: 10px;
+}
+.editInput {
+	width: 500px;
+	font-size: 20px;
+	text-align: center;
 }
