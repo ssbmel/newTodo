@@ -6,7 +6,6 @@ import supabase from "./supabase/supabase";
 export default function Home() {
   const [inputTodo, setInputTodo] = useState<string>("");
   const [todoList, setTodoList] = useState<Todo[]>([]);
-  const [isClicked, setIsClicked] = useState<boolean>(false);
   const editTodoRef = useRef(null);
 
   const fetchTodos = async () => {
@@ -15,7 +14,6 @@ export default function Home() {
       console.log(error);
     }
     setTodoList(data);
-    console.log("data", data);
   };
 
   useEffect(() => {
@@ -31,10 +29,12 @@ export default function Home() {
     const newTodo = {
       contents: inputTodo,
       isDone: false,
+      isClicked: false,
     };
     const { data, error } = await supabase.from("todos").insert({
       contents: inputTodo,
       isDone: false,
+      isClicked: false,
     });
     if (error) {
       console.log(error);
@@ -54,18 +54,33 @@ export default function Home() {
     fetchTodos();
   };
 
-  const editHandler = async (id:number) => {
+  const editHandler = async (id: number) => {
+    const clickedBtn = todoList.map((todo) =>
+      todo.id === id
+        ? {
+            ...todo,
+            isClicked: !todo.isClicked,
+          }
+        : todo
+    );
+    setTodoList(clickedBtn);
+  };
+
+  const editTodoHandler = async (id: number) => {
     const { data, error } = await supabase
-    .from('todos')
-    .update({ contents: "수정중" })
-    .eq("id", id)
-    .select()
-    if(error) {
+      .from("todos")
+      .update({ contents: editTodoRef.current.value })
+      .eq("id", id)
+      .select();
+    if (error) {
       console.log(error);
+    } else {
+      alert("수정되었습니당");
+      console.log(data);
     }
     setTodoList([...todoList]);
     fetchTodos();
-  }
+  };
 
   const toggleHandler = async (id: number) => {
     const finishedContent = todoList.map((todo) =>
@@ -88,7 +103,6 @@ export default function Home() {
             type="text"
             value={inputTodo}
             onChange={onChange}
-            ref={editTodoRef}
             placeholder="할일을 적어주세욧!"
             className="inputStyle"
           />
@@ -97,24 +111,43 @@ export default function Home() {
               height: "30px",
               cursor: "pointer",
             }}
-          >등록</button>
+          >
+            등록
+          </button>
         </form>
         <hr />
         <div>
           {todoList.map((todo) => (
-            <div className="todoBox"
-              key={todo.id}>
-              <p
-                key={todo.id}
-                onClick={() => toggleHandler(todo.id)}
-                style={{
-                  cursor: "pointer",
-                  textDecoration:
-                    todo.isDone === true ? "line-through" : "none",
-                }}
-              >{todo.contents}</p>
-              <button className="btn" onClick={() => editHandler(todo.id)}>수정</button>
-              <button className="btn" onClick={() => deleteHandler(todo.id)}>삭제</button>
+            <div className="todoBox" key={todo.id}>
+              {todo.isClicked ? (
+                <input defaultValue={todo.contents} ref={editTodoRef} />
+              ) : (
+                <p
+                  key={todo.id}
+                  onClick={() => toggleHandler(todo.id)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: todo.isDone ? "line-through" : "none",
+                  }}
+                >
+                  {todo.contents}
+                </p>
+              )}
+              {todo.isClicked ? (
+                <button
+                  className="btn"
+                  onClick={() => editTodoHandler(todo.id)}
+                >
+                  수정완료
+                </button>
+              ) : (
+                <button className="btn" onClick={() => editHandler(todo.id)}>
+                  수정
+                </button>
+              )}
+              <button className="btn" onClick={() => deleteHandler(todo.id)}>
+                삭제
+              </button>
             </div>
           ))}
         </div>

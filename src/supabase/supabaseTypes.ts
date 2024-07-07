@@ -2,6 +2,7 @@ export type Todo = {
   id: number;
   contents: string;
   isDone: boolean;
+  isClicked: boolean;
 };
 
 // export type Database = {
