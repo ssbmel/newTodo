@@ -6,12 +6,15 @@ import supabase from "./supabase/supabase";
 export default function Home() {
   const [inputTodo, setInputTodo] = useState<string>("");
   const [todoList, setTodoList] = useState<Todo[]>([]);
-  const editTodoRef = useRef(null);
+  const editTodoRef = useRef<HTMLInputElement>(null);
 
   const fetchTodos = async () => {
     const { data, error } = await supabase.from("todos").select("*");
     if (error) {
       console.log(error);
+    }
+    if (!data) {
+      return
     }
     setTodoList(data);
   };
@@ -26,7 +29,7 @@ export default function Home() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTodo = {
+    const newTodo: Todo = {
       contents: inputTodo,
       isDone: false,
       isClicked: false,
@@ -38,6 +41,8 @@ export default function Home() {
     });
     if (error) {
       console.log(error);
+      console.log(data);
+      
     }
     setTodoList([...todoList, newTodo]);
     setInputTodo("");
@@ -55,7 +60,7 @@ export default function Home() {
   };
 
   const editHandler = async (id: number) => {
-    const clickedBtn = todoList.map((todo) =>
+    const clickedBtn = todoList?.map((todo) =>
       todo.id === id
         ? {
             ...todo,
@@ -67,6 +72,9 @@ export default function Home() {
   };
 
   const editTodoHandler = async (id: number) => {
+    if(!editTodoRef.current) {
+      return;
+    }
     const { data, error } = await supabase
       .from("todos")
       .update({ contents: editTodoRef.current.value })
@@ -83,7 +91,7 @@ export default function Home() {
   };
 
   const toggleHandler = async (id: number) => {
-    const finishedContent = todoList.map((todo) =>
+    const finishedContent = todoList?.map((todo) =>
       todo.id === id
         ? {
             ...todo,
@@ -117,7 +125,7 @@ export default function Home() {
         </form>
         <hr />
         <div>
-          {todoList.map((todo) => (
+          {todoList?.map((todo) => (
             <div className="todoBox" key={todo.id}>
               {todo.isClicked ? (
                 <input className="editInput" defaultValue={todo.contents} ref={editTodoRef} />
